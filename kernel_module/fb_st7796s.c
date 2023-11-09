@@ -105,71 +105,54 @@
 static int init_display(struct fbtft_par *par)
 {
 	uint8_t madctrl_data;
-	
 	pr_info("ST7796 driver: load");
-	pr_info("ST7796 Rotation: %d",par->pdata->rotate);
-
+	pr_info("ST7796 Rotation: %d", par->pdata->rotate);
 	write_reg(par, ST7796S_SWRESET);
 	mdelay(100);
-
 	write_reg(par, ST7796S_SLPOUT);
 	mdelay(20);
-
-	write_reg(par, ST7796S_CSCON, 0x00C3);  
-	write_reg(par, ST7796S_CSCON, 0x0096);  
-
-
+	write_reg(par, ST7796S_CSCON, 0x00C3);
+	write_reg(par, ST7796S_CSCON, 0x0096);
 	switch (par->pdata->rotate)
 	{
 	case 90:
 		pr_info("ST7796 Set rotation 90");
 		madctrl_data = TFT_ROTATE_90;
 		break;
-
 	case 180:
 		pr_info("ST7796 Set rotation 180");
 		madctrl_data = TFT_ROTATE_180;
 		break;
-
 	case 270:
 		pr_info("ST7796 Set rotation 270");
 		madctrl_data = TFT_ROTATE_270;
 		break;
-
 	default:
 		pr_info("ST7796 Set rotation 0");
 		madctrl_data = TFT_NO_ROTATION;
 		break;
 	}
-
 	madctrl_data |= ST7796S_COLOR;
-	
-	pr_info("ST7796 MADCTRL: 0x%0X",madctrl_data);
-
+	pr_info("ST7796 MADCTRL: 0x%0X", madctrl_data);
 	write_reg(par, ST7796S_MADCTL, madctrl_data);
 	write_reg(par, ST7796S_COLMOD, 0x0055);
-
-	write_reg(par, ST7796S_DIC, 0x0001);  
+	write_reg(par, ST7796S_DIC, 0x0001);
 	write_reg(par, ST7796S_EM, 0x00C6);
-
 	write_reg(par, ST7796S_PWR2, 0x0015);
 	write_reg(par, ST7796S_PWR3, 0x00AF);
 	write_reg(par, ST7796S_VCMPCTL, 0x0022);
 	write_reg(par, ST7796S_VCMOST, 0x0000);
 	write_reg(par, ST7796S_DOCA, 0x0040, 0x008A, 0x0000, 0x0000, 0x0029, 0x0019, 0x00A5, 0x0033);
-
 	write_reg(par, ST7796S_PGC, 0x00F0, 0x0004, 0x0008, 0x0009, 0x0008, 0x0015, 0x002F, 0x0042, 0x0046, 0x0028, 0x0015, 0x0016, 0x0029, 0x002D);
 	write_reg(par, ST7796S_NGC, 0x00F0, 0x0004, 0x0009, 0x0009, 0x0008, 0x0015, 0x002E, 0x0046, 0x0046, 0x0028, 0x0015, 0x0015, 0x0029, 0x002D);
-
 	write_reg(par, ST7796S_NORON);
-
 	write_reg(par, ST7796S_WRCTRLD, 0x0024);
 	write_reg(par, ST7796S_CSCON, 0x003C);
 	write_reg(par, ST7796S_CSCON, 0x0069);
 	write_reg(par, ST7796S_DISPON);
-
 	return 0;
 }
+
 
 /**
  * blank() - blank the display
@@ -193,13 +176,24 @@ static struct fbtft_display display = {
 	},
 };
 
-FBTFT_REGISTER_DRIVER(DRVNAME, "sitronix,st7796s", &display);
+static struct spi_device_id st7796s_id[] = {
+	{ "st7796s", 0 },
+	{ },
+};
+MODULE_DEVICE_TABLE(spi, st7796s_id);
 
-MODULE_ALIAS("spi:" DRVNAME);
-MODULE_ALIAS("platform:" DRVNAME);
+static struct spi_driver st7796s_spi_driver = {
+	.driver = {
+		.name = DRVNAME,
+	},
+	.probe = fbtft_spi_probe,
+	.remove = fbtft_spi_remove,
+	.id_table = st7796s_id,
+};
+
+module_spi_driver(st7796s_spi_driver);
+
 MODULE_ALIAS("spi:st7796s");
-MODULE_ALIAS("platform:st7796s");
-
 MODULE_DESCRIPTION("FB driver for the ST7796S LCD Controller");
 MODULE_AUTHOR("NNN");
 MODULE_LICENSE("GPL");
