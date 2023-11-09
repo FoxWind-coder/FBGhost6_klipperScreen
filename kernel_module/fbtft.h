@@ -219,7 +219,7 @@ void fbtft_write_reg16_bus16(struct fbtft_par *par, int len, ...);
 									   \
 static int fbtft_driver_probe_spi(struct spi_device *spi)                  \
 {                                                                          \
-	return fbtft_probe_common(&_display, spi, NULL);                    \
+	return fbtft_probe_common(display, spi, NULL);                    \
 }                                                                          \
 									   \
 static int fbtft_driver_remove_spi(struct spi_device *spi)                 \
