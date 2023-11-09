@@ -10,12 +10,10 @@
 #include <linux/platform_device.h>
 
 #define FBTFT_ONBOARD_BACKLIGHT 2
-
 #define FBTFT_GPIO_NO_MATCH		0xFFFF
 #define FBTFT_GPIO_NAME_SIZE	32
 #define FBTFT_MAX_INIT_SEQUENCE      512
 #define FBTFT_GAMMA_MAX_VALUES_TOTAL 128
-
 #define FBTFT_OF_INIT_CMD	BIT(24)
 #define FBTFT_OF_INIT_DELAY	BIT(25)
 
@@ -62,7 +60,6 @@ struct fbtft_ops {
 	int (*read)(struct fbtft_par *par, void *buf, size_t len);
 	int (*write_vmem)(struct fbtft_par *par, size_t offset, size_t len);
 	void (*write_register)(struct fbtft_par *par, int len, ...);
-
 	void (*set_addr_win)(struct fbtft_par *par,
 			     int xs, int ys, int xe, int ye);
 	void (*reset)(struct fbtft_par *par);
@@ -71,15 +68,12 @@ struct fbtft_ops {
 			       unsigned int start_line, unsigned int end_line);
 	int (*init_display)(struct fbtft_par *par);
 	int (*blank)(struct fbtft_par *par, bool on);
-
 	unsigned long (*request_gpios_match)(struct fbtft_par *par,
 					     const struct fbtft_gpio *gpio);
 	int (*request_gpios)(struct fbtft_par *par);
 	int (*verify_gpios)(struct fbtft_par *par);
-
 	void (*register_backlight)(struct fbtft_par *par);
 	void (*unregister_backlight)(struct fbtft_par *par);
-
 	int (*set_var)(struct fbtft_par *par);
 	int (*set_gamma)(struct fbtft_par *par, u32 *curves);
 };
@@ -152,42 +146,6 @@ struct fbtft_platform_data {
  * supported by kernel-doc.
  *
  */
-/* @spi: Set if it is a SPI device
- * @pdev: Set if it is a platform device
- * @info: Pointer to framebuffer fb_info structure
- * @pdata: Pointer to platform data
- * @ssbuf: Not used
- * @pseudo_palette: Used by fb_set_colreg()
- * @txbuf.buf: Transmit buffer
- * @txbuf.len: Transmit buffer length
- * @buf: Small buffer used when writing init data over SPI
- * @startbyte: Used by some controllers when in SPI mode.
- *             Format: 6 bit Device id + RS bit + RW bit
- * @fbtftops: FBTFT operations provided by driver or device (platform_data)
- * @dirty_lock: Protects dirty_lines_start and dirty_lines_end
- * @dirty_lines_start: Where to begin updating display
- * @dirty_lines_end: Where to end updating display
- * @gpio.reset: GPIO used to reset display
- * @gpio.dc: Data/Command signal, also known as RS
- * @gpio.rd: Read latching signal
- * @gpio.wr: Write latching signal
- * @gpio.latch: Bus latch signal, eg. 16->8 bit bus latch
- * @gpio.cs: LCD Chip Select with parallel interface bus
- * @gpio.db[16]: Parallel databus
- * @gpio.led[16]: Led control signals
- * @gpio.aux[16]: Auxiliary signals, not used by core
- * @init_sequence: Pointer to LCD initialization array
- * @gamma.lock: Mutex for Gamma curve locking
- * @gamma.curves: Pointer to Gamma curve array
- * @gamma.num_values: Number of values per Gamma curve
- * @gamma.num_curves: Number of Gamma curves
- * @debug: Pointer to debug value
- * @current_debug:
- * @first_update_done: Used to only time the first display update
- * @update_time: Used to calculate 'fps' in debug output
- * @bgr: BGR mode/\n
- * @extra: Extra info needed by driver
- */
 struct fbtft_par {
 	struct spi_device *spi;
 	struct platform_device *pdev;
@@ -241,6 +199,7 @@ int fbtft_write_buf_dc(struct fbtft_par *par, void *buf, size_t len, int dc);
 __printf(5, 6)
 void fbtft_dbg_hex(const struct device *dev, int groupsize,
 		   void *buf, size_t len, const char *fmt, ...);
+
 struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
 					struct device *dev,
 					struct fbtft_platform_data *pdata);
@@ -304,7 +263,6 @@ static const struct of_device_id dt_ids[] = {                              \
 };                                                                         \
 									   \
 MODULE_DEVICE_TABLE(of, dt_ids);                                           \
-									   \
 									   \
 static struct spi_driver fbtft_driver_spi_driver = {                       \
 	.driver = {                                                        \
@@ -380,7 +338,6 @@ module_exit(fbtft_driver_module_exit);
 #define DEBUG_FB_IMAGEBLIT          BIT(12)
 #define DEBUG_FB_SETCOLREG          BIT(13)
 #define DEBUG_FB_BLANK              BIT(14)
-
 #define DEBUG_SYSFS                 BIT(16)
 
 /* fbtftops */
