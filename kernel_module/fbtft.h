@@ -312,7 +312,7 @@ static struct spi_driver fbtft_driver_spi_driver = {                       \
 		.of_match_table = dt_ids,                                  \
 	},                                                                 \
 	.probe  = fbtft_driver_probe_spi,                                  \
-	.remove = fbtft_driver_remove_spi,                                 \
+	//.remove = fbtft_driver_remove_spi,                                 \
 };                                                                         \
 									   \
 static struct platform_driver fbtft_driver_platform_driver = {             \
